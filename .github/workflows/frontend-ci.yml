@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   frontend:
@@ -26,6 +27,6 @@ name: Validar archivos principales
       
 name: Ejecutar deploy en Render
       if: github.ref == 'refs/heads/main'
-      run: curl "$RENDER_DEPLOY_HOOK_URL"
+      run: curl -fsSL "$RENDER_DEPLOY_HOOK_URL"
       env:
         RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
