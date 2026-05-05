@@ -1,13 +1,11 @@
 // URL base del backend.
 // Local: usa Spring Boot en localhost.
 // Producción: reemplaza PRODUCTION_API_URL por la URL real del backend en Render.
-const LOCAL_API_URL = "http://localhost:8080/api";
-const PRODUCTION_API_URL = "https://clinc-back-end.onrender.com";
 
-const API_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? LOCAL_API_URL
-    : PRODUCTION_API_URL;
+//const LOCAL_API_URL = "http://localhost:8080/api";
+const PRODUCTION_API_URL = "https://clinc-back-end.onrender.com/api";
+
+const API_URL = PRODUCTION_API_URL; // Cambia a LOCAL_API_URL para desarrollo local.
 
 const patientForm = document.getElementById("patientForm");
 const doctorForm = document.getElementById("doctorForm");
