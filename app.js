@@ -3,8 +3,8 @@
 // Si se sube a Render, cambia la URL de producción por la URL real del backend desplegado.
 const API_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:8080/api"
-    : "https://clinic-back-end.onrender.com/api";
+    ? "https://clinc-back-end.onrender.coma/api"
+    : "https://clinic-back-end.onrender.com/api"
 
 // Formularios principales
 const patientForm = document.getElementById("patientForm");
