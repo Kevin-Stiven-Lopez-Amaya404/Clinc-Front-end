@@ -11,21 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      
-name: Descargar código
-      uses: actions/checkout@v4
+      - name: Descargar código
+        uses: actions/checkout@v4
 
-      
-name: Validar archivos principales
-      run: |
-        test -f index.html
-        test -f styles.css
-        test -f app.js
-        test -f validation.js
+      - name: Validar archivos principales
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f app.js
+          test -f validation.js
 
-      
-name: Ejecutar deploy en Render
-      if: github.ref == 'refs/heads/main'
-      run: curl "$RENDER_DEPLOY_HOOK_URL"
-      env:
-        RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      - name: Ejecutar deploy en Render
+        if: github.ref == 'refs/heads/main'
+        run: curl "$RENDER_DEPLOY_HOOK_URL"
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}

@@ -1,22 +1,22 @@
 // URL base del backend.
-// Si se abre localmente con Live Server usa localhost.
-// Si se sube a Render, cambia la URL de producción por la URL real del backend desplegado.
+// Local: usa Spring Boot en localhost.
+// Producción: reemplaza PRODUCTION_API_URL por la URL real del backend en Render.
+const LOCAL_API_URL = "http://localhost:8080/api";
+const PRODUCTION_API_URL = "https://clinc-back-end.onrender.com";
+
 const API_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "https://clinc-back-end.onrender.coma/api"
-    : "https://clinic-back-end.onrender.com/api"
+    ? LOCAL_API_URL
+    : PRODUCTION_API_URL;
 
-// Formularios principales
 const patientForm = document.getElementById("patientForm");
 const doctorForm = document.getElementById("doctorForm");
 const appointmentForm = document.getElementById("appointmentForm");
 
-// Contenedores donde se pintan datos
 const patientList = document.getElementById("patientList");
 const doctorList = document.getElementById("doctorList");
 const appointmentTable = document.getElementById("appointmentTable");
 
-// Campos de paciente
 const patientId = document.getElementById("patientId");
 const patientFirstName = document.getElementById("patientFirstName");
 const patientLastName = document.getElementById("patientLastName");
@@ -27,7 +27,6 @@ const patientFormTitle = document.getElementById("patientFormTitle");
 const patientSubmitBtn = document.getElementById("patientSubmitBtn");
 const cancelPatientEditBtn = document.getElementById("cancelPatientEditBtn");
 
-// Campos de doctor
 const doctorId = document.getElementById("doctorId");
 const doctorFirstName = document.getElementById("doctorFirstName");
 const doctorLastName = document.getElementById("doctorLastName");
@@ -38,7 +37,6 @@ const doctorFormTitle = document.getElementById("doctorFormTitle");
 const doctorSubmitBtn = document.getElementById("doctorSubmitBtn");
 const cancelDoctorEditBtn = document.getElementById("cancelDoctorEditBtn");
 
-// Campos de cita médica
 const appointmentId = document.getElementById("appointmentId");
 const appointmentDate = document.getElementById("appointmentDate");
 const appointmentPatient = document.getElementById("appointmentPatient");
@@ -51,43 +49,31 @@ const appointmentSubmitBtn = document.getElementById("appointmentSubmitBtn");
 const cancelAppointmentEditBtn = document.getElementById("cancelAppointmentEditBtn");
 const refreshBtn = document.getElementById("refreshBtn");
 
-// Arreglos globales que almacenan los datos traídos desde el backend
 let patients = [];
 let doctors = [];
 let appointments = [];
 
-// Función genérica para hacer peticiones HTTP al backend.
-// Evita repetir fetch en cada módulo.
 async function request(endpoint, options = {}) {
   const response = await fetch(`${API_URL}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     ...options,
   });
 
   if (!response.ok) {
     let message = "Error en la petición al backend";
-
     try {
       const error = await response.json();
       message = error.message || message;
     } catch {
-      // Si la respuesta no es JSON, se usa el mensaje por defecto.
+      // Si no hay JSON, se conserva el mensaje por defecto.
     }
-
     throw new Error(message);
   }
 
-  // Las respuestas 204 no tienen cuerpo.
-  if (response.status === 204) {
-    return null;
-  }
-
+  if (response.status === 204) return null;
   return response.json();
 }
 
-// Carga inicial de pacientes, doctores y citas.
 async function loadData() {
   try {
     patients = await request("/patients");
@@ -98,28 +84,24 @@ async function loadData() {
     renderDoctors();
     renderAppointments();
   } catch (error) {
-    alert("No se pudo conectar con el backend. Verifica que Spring Boot esté corriendo.");
+    alert("No se pudo conectar con el backend. Verifica que Spring Boot esté corriendo o revisa la URL en app.js.");
   }
 }
 
-// Formatea nombres completos para evitar repetir lógica.
 function fullName(person) {
   return `${person.firstName} ${person.lastName}`;
 }
 
-// Convierte fecha del backend a formato compatible con input datetime-local.
 function toDateTimeLocal(value) {
   if (!value) return "";
   return value.substring(0, 16);
 }
 
-// Muestra la fecha en formato legible para la tabla.
 function formatDate(value) {
   if (!value) return "Sin fecha";
   return new Date(value).toLocaleString("es-CO");
 }
 
-// Renderiza pacientes y actualiza el select de citas.
 function renderPatients() {
   patientList.innerHTML = "";
   appointmentPatient.innerHTML = '<option value="">Seleccione paciente</option>';
@@ -131,32 +113,23 @@ function renderPatients() {
 
   patients.forEach((patient) => {
     patientList.innerHTML += `
-      <div class="list-group-item" data-id="${patient.id}">
+      <div class="list-group-item">
         <div>
-          <i class="bi bi-person-vcard text-success me-2"></i>
           <strong>${fullName(patient)}</strong>
-          <div class="text-muted small">Doc: ${patient.documentNumber} • ${patient.email}</div>
+          <br>
+          <small class="text-muted">Doc: ${patient.documentNumber} • ${patient.email}</small>
         </div>
-
         <div class="d-flex gap-2">
-          <button class="btn btn-sm btn-warning" onclick="editPatient(${patient.id})">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <button class="btn btn-sm btn-danger" onclick="deletePatient(${patient.id})">
-            <i class="bi bi-trash"></i>
-          </button>
+          <button class="btn btn-sm btn-warning" onclick="editPatient(${patient.id})"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deletePatient(${patient.id})"><i class="bi bi-trash"></i></button>
         </div>
       </div>
     `;
 
-    appointmentPatient.innerHTML += `
-      <option value="${patient.id}">${fullName(patient)}</option>
-    `;
+    appointmentPatient.innerHTML += `<option value="${patient.id}">${fullName(patient)}</option>`;
   });
 }
 
-// Renderiza doctores y actualiza el select de citas.
 function renderDoctors() {
   doctorList.innerHTML = "";
   appointmentDoctor.innerHTML = '<option value="">Seleccione doctor</option>';
@@ -168,41 +141,28 @@ function renderDoctors() {
 
   doctors.forEach((doctor) => {
     doctorList.innerHTML += `
-      <div class="list-group-item" data-id="${doctor.id}">
+      <div class="list-group-item">
         <div>
-          <i class="bi bi-person-badge text-teal-custom me-2"></i>
           <strong>${fullName(doctor)}</strong>
-          <div class="text-muted small">${doctor.specialty} • ${doctor.email}</div>
+          <br>
+          <small class="text-muted">${doctor.specialty} • ${doctor.email}</small>
         </div>
-
         <div class="d-flex gap-2">
-          <button class="btn btn-sm btn-warning" onclick="editDoctor(${doctor.id})">
-            <i class="bi bi-pencil"></i>
-          </button>
-
-          <button class="btn btn-sm btn-danger" onclick="deleteDoctor(${doctor.id})">
-            <i class="bi bi-trash"></i>
-          </button>
+          <button class="btn btn-sm btn-warning" onclick="editDoctor(${doctor.id})"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteDoctor(${doctor.id})"><i class="bi bi-trash"></i></button>
         </div>
       </div>
     `;
 
-    appointmentDoctor.innerHTML += `
-      <option value="${doctor.id}">${fullName(doctor)} - ${doctor.specialty}</option>
-    `;
+    appointmentDoctor.innerHTML += `<option value="${doctor.id}">${fullName(doctor)} - ${doctor.specialty}</option>`;
   });
 }
 
-// Renderiza citas en la tabla principal.
 function renderAppointments() {
   appointmentTable.innerHTML = "";
 
   if (appointments.length === 0) {
-    appointmentTable.innerHTML = `
-      <tr>
-        <td colspan="8" class="empty-state">No hay citas médicas registradas.</td>
-      </tr>
-    `;
+    appointmentTable.innerHTML = '<tr><td colspan="8" class="empty-state">No hay citas médicas registradas.</td></tr>';
     return;
   }
 
@@ -218,13 +178,8 @@ function renderAppointments() {
         <td>${appointment.treatment}</td>
         <td>
           <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-warning" onclick="editAppointment(${appointment.id})">
-              <i class="bi bi-pencil"></i>
-            </button>
-
-            <button class="btn btn-sm btn-danger" onclick="deleteAppointment(${appointment.id})">
-              <i class="bi bi-trash"></i>
-            </button>
+            <button class="btn btn-sm btn-warning" onclick="editAppointment(${appointment.id})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" onclick="deleteAppointment(${appointment.id})"><i class="bi bi-trash"></i></button>
           </div>
         </td>
       </tr>
@@ -232,7 +187,6 @@ function renderAppointments() {
   });
 }
 
-// Crear o actualizar paciente.
 patientForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -246,15 +200,9 @@ patientForm.addEventListener("submit", async (event) => {
 
   try {
     if (patientId.value) {
-      await request(`/patients/${patientId.value}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await request(`/patients/${patientId.value}`, { method: "PUT", body: JSON.stringify(data) });
     } else {
-      await request("/patients", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      await request("/patients", { method: "POST", body: JSON.stringify(data) });
     }
 
     resetPatientForm();
@@ -264,10 +212,8 @@ patientForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Carga los datos de un paciente en el formulario para actualizarlo.
 function editPatient(id) {
   const patient = patients.find((item) => item.id === id);
-
   if (!patient) return;
 
   patientId.value = patient.id;
@@ -283,11 +229,9 @@ function editPatient(id) {
   patientFirstName.focus();
 }
 
-// Elimina un paciente.
 async function deletePatient(id) {
   const patient = patients.find((item) => item.id === id);
   const confirmDelete = confirm(`¿Seguro que quieres eliminar al paciente ${patient ? fullName(patient) : ""}?`);
-
   if (!confirmDelete) return;
 
   try {
@@ -298,16 +242,14 @@ async function deletePatient(id) {
   }
 }
 
-// Limpia el formulario de pacientes.
 function resetPatientForm() {
   patientForm.reset();
   patientId.value = "";
-  patientFormTitle.innerHTML = '<i class="bi bi-person-vcard me-2"></i>Pacientes';
+  patientFormTitle.innerHTML = '<i class="bi bi-people me-2"></i>Pacientes';
   patientSubmitBtn.textContent = "Guardar paciente";
   cancelPatientEditBtn.classList.add("hidden");
 }
 
-// Crear o actualizar doctor.
 doctorForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -321,15 +263,9 @@ doctorForm.addEventListener("submit", async (event) => {
 
   try {
     if (doctorId.value) {
-      await request(`/doctors/${doctorId.value}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await request(`/doctors/${doctorId.value}`, { method: "PUT", body: JSON.stringify(data) });
     } else {
-      await request("/doctors", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      await request("/doctors", { method: "POST", body: JSON.stringify(data) });
     }
 
     resetDoctorForm();
@@ -339,10 +275,8 @@ doctorForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Carga los datos de un doctor en el formulario para actualizarlo.
 function editDoctor(id) {
   const doctor = doctors.find((item) => item.id === id);
-
   if (!doctor) return;
 
   doctorId.value = doctor.id;
@@ -358,11 +292,9 @@ function editDoctor(id) {
   doctorFirstName.focus();
 }
 
-// Elimina un doctor.
 async function deleteDoctor(id) {
   const doctor = doctors.find((item) => item.id === id);
   const confirmDelete = confirm(`¿Seguro que quieres eliminar al doctor ${doctor ? fullName(doctor) : ""}?`);
-
   if (!confirmDelete) return;
 
   try {
@@ -373,7 +305,6 @@ async function deleteDoctor(id) {
   }
 }
 
-// Limpia el formulario de doctores.
 function resetDoctorForm() {
   doctorForm.reset();
   doctorId.value = "";
@@ -382,7 +313,6 @@ function resetDoctorForm() {
   cancelDoctorEditBtn.classList.add("hidden");
 }
 
-// Crear o actualizar cita médica.
 appointmentForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -397,15 +327,9 @@ appointmentForm.addEventListener("submit", async (event) => {
 
   try {
     if (appointmentId.value) {
-      await request(`/appointments/${appointmentId.value}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await request(`/appointments/${appointmentId.value}`, { method: "PUT", body: JSON.stringify(data) });
     } else {
-      await request("/appointments", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      await request("/appointments", { method: "POST", body: JSON.stringify(data) });
     }
 
     resetAppointmentForm();
@@ -415,10 +339,8 @@ appointmentForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Carga los datos de una cita en el formulario para actualizarla.
 function editAppointment(id) {
   const appointment = appointments.find((item) => item.id === id);
-
   if (!appointment) return;
 
   appointmentId.value = appointment.id;
@@ -436,10 +358,8 @@ function editAppointment(id) {
   appointmentForm.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-// Elimina una cita médica.
 async function deleteAppointment(id) {
   const confirmDelete = confirm("¿Seguro que quieres eliminar esta cita médica?");
-
   if (!confirmDelete) return;
 
   try {
@@ -450,7 +370,6 @@ async function deleteAppointment(id) {
   }
 }
 
-// Limpia el formulario de citas.
 function resetAppointmentForm() {
   appointmentForm.reset();
   appointmentId.value = "";
@@ -459,11 +378,9 @@ function resetAppointmentForm() {
   cancelAppointmentEditBtn.classList.add("hidden");
 }
 
-// Botones secundarios
 cancelPatientEditBtn.addEventListener("click", resetPatientForm);
 cancelDoctorEditBtn.addEventListener("click", resetDoctorForm);
 cancelAppointmentEditBtn.addEventListener("click", resetAppointmentForm);
 refreshBtn.addEventListener("click", loadData);
 
-// Carga inicial al abrir la página.
 loadData();
