@@ -2,16 +2,12 @@ name: Frontend CI/CD
 
 on:
   push:
-    branches:
-      
-main
-pull_request:
-  branches:
-main
-workflow_dispatch:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  frontend:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +26,6 @@ name: Validar archivos principales
       
 name: Ejecutar deploy en Render
       if: github.ref == 'refs/heads/main'
-      run: curl -fsSL "$RENDER_DEPLOY_HOOK_URL"
+      run: curl "$RENDER_DEPLOY_HOOK_URL"
       env:
         RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
