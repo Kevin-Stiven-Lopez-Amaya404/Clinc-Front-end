@@ -1,0 +1,166 @@
+/* Variables de color para mantener una identidad visual tipo hospital */
+:root {
+  --clinic-green: #0f9f6e;
+  --clinic-green-dark: #057a55;
+  --clinic-mint: #def7ec;
+  --clinic-teal: #0e7490;
+  --clinic-bg: #f0fdf4;
+  --clinic-text: #163832;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 30%),
+    linear-gradient(180deg, #f0fdf4 0%, #f8fafc 60%);
+  color: var(--clinic-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Encabezado verde estilo hospital */
+.hero {
+  background:
+    linear-gradient(135deg, rgba(5, 122, 85, 0.95), rgba(15, 159, 110, 0.95)),
+    url("https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=1400&q=80");
+  background-size: cover;
+  background-position: center;
+  padding-bottom: 70px;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.main-content {
+  margin-top: -55px;
+}
+
+.card {
+  border-radius: 20px;
+}
+
+.stat-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 35px rgba(5, 122, 85, 0.15) !important;
+}
+
+.stat-icon {
+  min-width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  font-size: 28px;
+}
+
+.bg-teal-subtle {
+  background: #cffafe;
+}
+
+.text-teal-custom {
+  color: var(--clinic-teal);
+}
+
+.btn-teal {
+  background: var(--clinic-teal);
+  color: white;
+  border: none;
+}
+
+.btn-teal:hover {
+  background: #155e75;
+  color: white;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--clinic-green);
+  box-shadow: 0 0 0 0.25rem rgba(15, 159, 110, 0.18);
+}
+
+.small-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.list-group-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px !important;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.empty-state {
+  padding: 18px;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  color: #374151;
+  font-size: 14px;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.12) !important;
+}
+
+.error-message {
+  display: block;
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-bottom: 45px;
+  }
+
+  .main-content {
+    margin-top: -35px;
+  }
+
+  .display-5 {
+    font-size: 2rem;
+  }
+
+  .list-group-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

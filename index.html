@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinic Admin</title>
+
+  <!-- Bootstrap: framework CSS para estilos rápidos y responsive -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Bootstrap Icons: íconos visuales para botones y secciones -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+
+  <!-- Hoja de estilos propia del proyecto -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Encabezado principal del sistema -->
+  <header class="hero text-white">
+    <nav class="navbar navbar-dark">
+      <div class="container">
+        <span class="navbar-brand fw-bold fs-3">
+          <i class="bi bi-hospital me-2"></i>
+          Clinic Admin
+        </span>
+
+        <span class="badge bg-light text-success px-3 py-2">
+          Spring Boot + PostgreSQL
+        </span>
+      </div>
+    </nav>
+
+    <section class="container py-5">
+      <div class="glass-card rounded-4 p-4 p-md-5">
+        <span class="badge bg-success mb-3">
+          <i class="bi bi-heart-pulse me-1"></i>
+          Sistema clínico
+        </span>
+
+        <h1 class="display-5 fw-bold">
+          Gestión de clínica y citas médicas
+        </h1>
+
+        <p class="lead mb-0">
+          Administra pacientes, doctores y citas médicas desde una interfaz conectada al backend.
+        </p>
+      </div>
+    </section>
+  </header>
+
+  <main class="container main-content pb-5">
+
+    <!-- Tarjetas resumen -->
+    <section class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="card stat-card shadow-sm border-0">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="stat-icon bg-success-subtle text-success">
+              <i class="bi bi-person-vcard"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">Pacientes</h5>
+              <p class="text-muted mb-0">Registro y control.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card shadow-sm border-0">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="stat-icon bg-teal-subtle text-teal-custom">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">Doctores</h5>
+              <p class="text-muted mb-0">Especialistas activos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card stat-card shadow-sm border-0">
+          <div class="card-body d-flex align-items-center gap-3">
+            <div class="stat-icon bg-warning-subtle text-warning">
+              <i class="bi bi-calendar2-check"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">Citas</h5>
+              <p class="text-muted mb-0">Historial clínico básico.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pacientes y doctores -->
+    <section class="row g-4 mb-4">
+
+      <!-- Pacientes -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <span class="text-success fw-bold text-uppercase small">Módulo</span>
+                <h2 id="patientFormTitle" class="fw-bold mb-0">
+                  <i class="bi bi-person-vcard me-2"></i>
+                  Pacientes
+                </h2>
+              </div>
+
+              <button id="cancelPatientEditBtn" type="button" class="btn btn-secondary btn-sm hidden">
+                Cancelar
+              </button>
+            </div>
+
+            <!-- Formulario para crear o actualizar pacientes -->
+            <form id="patientForm" class="mb-4">
+              <input type="hidden" id="patientId" />
+
+              <div class="row g-3">
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Nombres</label>
+                  <input id="patientFirstName" type="text" class="form-control" placeholder="Ej: Juan" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Apellidos</label>
+                  <input id="patientLastName" type="text" class="form-control" placeholder="Ej: Pérez" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Documento</label>
+                  <input id="patientDocument" type="text" class="form-control" placeholder="Número de documento" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Teléfono</label>
+                  <input id="patientPhone" type="text" class="form-control" placeholder="3001234567" required />
+                </div>
+
+                <div class="col-12 input-box">
+                  <label class="form-label fw-semibold">Correo</label>
+                  <input id="patientEmail" type="email" class="form-control" placeholder="paciente@email.com" required />
+                </div>
+              </div>
+
+              <button id="patientSubmitBtn" class="btn btn-success w-100 mt-3" type="submit">
+                Guardar paciente
+              </button>
+            </form>
+
+            <div id="patientList" class="list-group small-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctores -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <span class="text-teal-custom fw-bold text-uppercase small">Módulo</span>
+                <h2 id="doctorFormTitle" class="fw-bold mb-0">
+                  <i class="bi bi-person-badge me-2"></i>
+                  Doctores
+                </h2>
+              </div>
+
+              <button id="cancelDoctorEditBtn" type="button" class="btn btn-secondary btn-sm hidden">
+                Cancelar
+              </button>
+            </div>
+
+            <!-- Formulario para crear o actualizar doctores -->
+            <form id="doctorForm" class="mb-4">
+              <input type="hidden" id="doctorId" />
+
+              <div class="row g-3">
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Nombres</label>
+                  <input id="doctorFirstName" type="text" class="form-control" placeholder="Ej: Laura" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Apellidos</label>
+                  <input id="doctorLastName" type="text" class="form-control" placeholder="Ej: Gómez" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Especialidad</label>
+                  <input id="doctorSpecialty" type="text" class="form-control" placeholder="Medicina general" required />
+                </div>
+
+                <div class="col-md-6 input-box">
+                  <label class="form-label fw-semibold">Teléfono</label>
+                  <input id="doctorPhone" type="text" class="form-control" placeholder="3112223333" required />
+                </div>
+
+                <div class="col-12 input-box">
+                  <label class="form-label fw-semibold">Correo</label>
+                  <input id="doctorEmail" type="email" class="form-control" placeholder="doctor@clinic.com" required />
+                </div>
+              </div>
+
+              <button id="doctorSubmitBtn" class="btn btn-teal w-100 mt-3" type="submit">
+                Guardar doctor
+              </button>
+            </form>
+
+            <div id="doctorList" class="list-group small-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Formulario cita médica -->
+    <section class="card shadow-sm border-0 mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <span class="text-warning fw-bold text-uppercase small">Formulario</span>
+            <h2 id="appointmentFormTitle" class="fw-bold mb-0">
+              <i class="bi bi-calendar-plus me-2"></i>
+              Crear cita médica
+            </h2>
+          </div>
+
+          <button id="cancelAppointmentEditBtn" class="btn btn-secondary hidden" type="button">
+            Cancelar edición
+          </button>
+        </div>
+
+        <!-- Formulario para crear o actualizar citas -->
+        <form id="appointmentForm">
+          <input type="hidden" id="appointmentId" />
+
+          <div class="row g-3">
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Fecha y hora</label>
+              <input id="appointmentDate" type="datetime-local" class="form-control" required />
+            </div>
+
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Paciente</label>
+              <select id="appointmentPatient" class="form-select" required>
+                <option value="">Seleccione paciente</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Doctor</label>
+              <select id="appointmentDoctor" class="form-select" required>
+                <option value="">Seleccione doctor</option>
+              </select>
+            </div>
+
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Motivo</label>
+              <input id="appointmentReason" type="text" class="form-control" placeholder="Motivo de consulta" required />
+            </div>
+
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Diagnóstico</label>
+              <textarea id="appointmentDiagnosis" class="form-control" rows="3" placeholder="Diagnóstico clínico" required></textarea>
+            </div>
+
+            <div class="col-md-6 input-box">
+              <label class="form-label fw-semibold">Tratamiento</label>
+              <textarea id="appointmentTreatment" class="form-control" rows="3" placeholder="Tratamiento recomendado" required></textarea>
+            </div>
+          </div>
+
+          <button id="appointmentSubmitBtn" type="submit" class="btn btn-warning text-dark fw-bold w-100 mt-4">
+            Guardar cita médica
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tabla citas -->
+    <section class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <span class="text-secondary fw-bold text-uppercase small">Agenda clínica</span>
+            <h2 class="fw-bold mb-0">
+              <i class="bi bi-table me-2"></i>
+              Citas registradas
+            </h2>
+          </div>
+
+          <button id="refreshBtn" class="btn btn-outline-success" type="button">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Actualizar lista
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Paciente</th>
+                <th>Doctor</th>
+                <th>Motivo</th>
+                <th>Diagnóstico</th>
+                <th>Tratamiento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody id="appointmentTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- JavaScript principal del CRUD -->
+  <script src="app.js"></script>
+
+  <!-- JavaScript de validaciones del formulario -->
+  <script src="validation.js"></script>
+</body>
+</html>
